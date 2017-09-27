@@ -29,8 +29,6 @@ namespace TestIoT
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddDebug();
-
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseSwagger();
