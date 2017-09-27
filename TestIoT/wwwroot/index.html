@@ -8,8 +8,24 @@
 </head>
 <body>
     <div class="container">
-        <h1>My Clock</h1>
-        <span id="theSpan"></span>
+        <h1>Sensors</h1>
+
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Updated</th>
+                    <th style="width: 80px;">Value</th>
+                    <th style="width: 80px;">Min</th>
+                    <th style="width: 80px;">Max</th>
+                    <th style="width: 80px;">Avg</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
@@ -20,8 +36,18 @@
         let theSpan = document.getElementById('theSpan');
         let webSocket = new WebSocket('ws://localhost:5000/api/sensors/stream');
         webSocket.onmessage = function (message) {
-            let event = JSON.parse(message.data);
+            const event = JSON.parse(message.data);
             console.log(event);
+            const time = moment(event.timestamp).format('HH:mm:ss');
+
+            let line = $(`tr#${event.id.substring(0, 8)}`);
+            if (line.length > 0) {
+                line.empty();
+            } else {
+                $('table tbody').append(`<tr id="${event.id.substring(0, 8)}"></tr>`);
+                line = $(`tr#${event.id.substring(0, 8)}`);
+            }
+            line.append(`<td><code>${event.id}</code></td><td>${time}</td><td>${event.value.toPrecision(5)}</td><td>${event.min.toPrecision(5)}</td><td>${event.max.toPrecision(5)}</td><td>${event.avg.toPrecision(5)}</td>`);
         };
     </script>
 </body>
